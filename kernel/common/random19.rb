@@ -13,7 +13,11 @@ class Rubinius::Randomizer
       random_float
     else
       if limit.kind_of?(Range)
-        random_range(limit)
+        if limit.min.kind_of?(Time)
+          Time.at(random_range((limit.min.to_f)..(limit.max.to_f)))
+        else
+          random_range(limit)
+        end
       elsif limit.kind_of?(Float)
         raise ArgumentError, "invalid argument - #{limit}" if limit <= 0
         random_float * limit
