@@ -215,4 +215,22 @@ ruby_version_is "1.9" do
       end.should raise_error(ArgumentError)
     end
   end
+
+  describe "Random#rand with a Range of Time" do
+    it "returns an element from the Range" do
+      start = Time.new(2013, 1, 1)
+      stop  = Time.new(2014, 1, 1)
+
+      Random.new.rand(start..stop).should be_an_instance_of(Time)
+    end
+
+    it "returns an object that is a member of the Range" do
+      start = Time.new(2013, 1, 1)
+      stop  = Time.new(2014, 1, 1)
+      value = Random.new.rand(start..stop)
+
+      value.should >= start
+      value.should <= stop
+    end
+  end
 end
