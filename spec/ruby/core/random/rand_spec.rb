@@ -232,6 +232,21 @@ ruby_version_is "1.9" do
 
       (value >= start && value <= stop).should == true
     end
+
+    # This is put in place to ensure that #rand works when the date library is
+    # not loaded. ruby_exe is used to run the code in an isolated/non-polluted
+    # environment.
+    it "creates a random Time value when Date/DateTime is not available" do
+      script = <<-EOF
+      start = Time.new(2013, 1, 1)
+      stop  = Time.new(2014, 1, 1)
+      value = Random.new.rand(start..stop)
+
+      print value.class
+      EOF
+
+      ruby_exe(script, :escape => true).should == 'Time'
+    end
   end
 
   describe "Random#rand with a Range of Date" do
