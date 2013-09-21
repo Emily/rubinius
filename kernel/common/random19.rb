@@ -13,8 +13,8 @@ class Rubinius::Randomizer
       random_float
     else
       if limit.kind_of?(Range)
-        if limit.min.kind_of?(Time)
-          Time.at(random_range((limit.min.to_f)..(limit.max.to_f)))
+        if limit.min.respond_to?(:to_time)
+          random_time_range(limit)
         else
           random_range(limit)
         end
@@ -34,6 +34,27 @@ class Rubinius::Randomizer
         end
       end
     end
+  end
+
+  ##
+  # Returns a random value from a range made out of Time, Date or DateTime
+  # instances.
+  #
+  # @param [Range] range
+  # @return [Time|Date|DateTime]
+  #
+  def random_time_range(range)
+    min  = range.min.to_time.to_f
+    max  = range.max.to_time.to_f
+    time = Time.at(random(min..max))
+
+    if range.min.is_a?(DateTime)
+      time = time.to_datetime
+    elsif range.min.is_a?(Date)
+      time = time.to_date
+    end
+
+    return time
   end
 end
 
