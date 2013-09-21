@@ -1,4 +1,5 @@
 require File.expand_path('../../../spec_helper', __FILE__)
+require 'date'
 
 ruby_version_is "1.9" do
   describe "Random.rand" do
@@ -229,8 +230,41 @@ ruby_version_is "1.9" do
       stop  = Time.new(2014, 1, 1)
       value = Random.new.rand(start..stop)
 
-      value.should >= start
-      value.should <= stop
+      (value >= start && value <= stop).should == true
+    end
+  end
+
+  describe "Random#rand with a Range of Date" do
+    it "returns an element from the Range" do
+      start = Date.new(2013, 1, 1)
+      stop  = Date.new(2014, 1, 1)
+
+      Random.new.rand(start..stop).should be_an_instance_of(Date)
+    end
+
+    it "returns an object that is a member of the Range" do
+      start = Date.new(2013, 1, 1)
+      stop  = Date.new(2014, 1, 1)
+      value = Random.new.rand(start..stop)
+
+      (value >= start && value <= stop).should == true
+    end
+  end
+
+  describe "Random#rand with a Range of DateTime" do
+    it "returns an element from the Range" do
+      start = DateTime.new(2013, 1, 1, 12)
+      stop  = DateTime.new(2014, 1, 1, 12)
+
+      Random.new.rand(start..stop).should be_an_instance_of(DateTime)
+    end
+
+    it "returns an object that is a member of the Range" do
+      start = DateTime.new(2013, 1, 1, 12)
+      stop  = DateTime.new(2014, 1, 1, 12)
+      value = Random.new.rand(start..stop)
+
+      (value >= start && value <= stop).should == true
     end
   end
 end
