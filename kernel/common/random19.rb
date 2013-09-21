@@ -13,7 +13,7 @@ class Rubinius::Randomizer
       random_float
     else
       if limit.kind_of?(Range)
-        if limit.min.respond_to?(:to_time)
+        if time_value?(limit.min)
           random_time_range(limit)
         else
           random_range(limit)
@@ -44,17 +44,37 @@ class Rubinius::Randomizer
   # @return [Time|Date|DateTime]
   #
   def random_time_range(range)
-    min  = range.min.to_time.to_f
-    max  = range.max.to_time.to_f
+    min  = time_to_float(range.min)
+    max  = time_to_float(range.max)
     time = Time.at(random(min..max))
 
-    if range.min.is_a?(DateTime)
+    if defined?(DateTime) && range.min.is_a?(DateTime)
       time = time.to_datetime
     elsif range.min.is_a?(Date)
       time = time.to_date
     end
 
     return time
+  end
+
+  ##
+  # Casts a Time/Date/DateTime instance to a Float.
+  #
+  # @param [Time|Date|DateTime] input
+  # @return [Float]
+  #
+  def time_to_float(input)
+    return input.respond_to?(:to_time) ? input.to_time.to_f : input.to_f
+  end
+
+  ##
+  # Checks if a given value is a Time, Date or DateTime object.
+  #
+  # @param [Mixed] input
+  # @return [TrueClass|FalseClass]
+  #
+  def time_value?(input)
+    return input.is_a?(Time) || input.is_a?(Date)
   end
 end
 
